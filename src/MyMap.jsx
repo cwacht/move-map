@@ -90,6 +90,7 @@ export default function MyMap() {
 					defaultZoom={13}
 					defaultCenter={position}
 					mapId="DEMO_MAP_ID"
+					gestureHandling={"greedy"}
 					onCameraChanged={(ev) =>
 						console.log(
 							"camera changed:",
