@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { supabase } from "./supabaseClient";
+import { SpotLocationContext } from "./SpotLocationContext";
 
 import {
 	APIProvider,
@@ -9,9 +10,14 @@ import {
 	// MapCameraChangedEvent,
 	// Marker,
 } from "@vis.gl/react-google-maps";
+// import App from "./App";
 
 export default function MyMap() {
-	const [spots, setSpots] = useState(null);
+	const [spots, setSpots] = useState([]);
+	// const [spotLocation, setSpotLocation] = useState([]);
+	const { spotLocation, setNewSpotLocation } = useContext(SpotLocationContext);
+	// const spotLocation = useContext(SpotLocationContext);
+
 	useEffect(() => {
 		loadSpots();
 	}, []);
@@ -21,7 +27,7 @@ export default function MyMap() {
 				{props.pois.map((poi) => (
 					<AdvancedMarker key={poi.key} position={poi.location}>
 						<Pin
-							background={"#FBBC04"}
+							background={poi.key=="omg" ? "cornflowerblue" : "#FBBC04"}
 							glyphColor={"#000"}
 							borderColor={"#000"}
 						/>
@@ -53,6 +59,25 @@ export default function MyMap() {
 	// 	{ key: "darlingHarbour", location: { lat: -33.87488, lng: 151.1987113 } },
 	// 	{ key: "barangaroo", location: { lat: -33.8605523, lng: 151.1972205 } },
 	// ];
+
+	const onMapClick = (e) => {
+		setSpots( spots.filter((spot) => spot.key !== "omg") );
+		let lat = Number(e.detail.latLng.lat.toFixed(6));
+		let lng = Number(e.detail.latLng.lng.toFixed(6));
+    // Update the state with the new array
+      const newMarker = {
+	      key:"omg",
+	      location: {
+	        lat: lat,
+	        lng: lng,
+	      }
+      };
+      setNewSpotLocation({
+	        lat: lat,
+	        lng: lng,
+	      })
+      setSpots((currentMarkers) => [...currentMarkers, newMarker]);
+    };
 
 	async function loadSpots() {
 		try {
@@ -99,6 +124,7 @@ export default function MyMap() {
 							ev.detail.zoom,
 						)
 					}
+					onClick={onMapClick}
 				>
 					{spots ? <PoiMarkers pois={spots} /> : ""}
 				</Map>
