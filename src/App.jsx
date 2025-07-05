@@ -1,21 +1,14 @@
 import "./App.css";
-import { useState, useEffect, useContext, createContext } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
 import Auth from "./Auth";
 import Account from "./Account";
 import MyMap from "./MyMap";
 import AddSpot from "./AddSpot";
 import { SpotLocationProvider } from './SpotLocationContext';
-// import { SpotLocationContext } from './SpotLocationContext';
-
-// export const SpotLocationContext = createContext({});
 
 function App() {
 	const [session, setSession] = useState(null);
-	const [spotName, setSpotName] = useState("");
-	// const { spotLocation } = useContext(SpotLocationContext);
-	// const [spotLocation, setSpotLocation] = useState({});
-
 
 	useEffect(() => {
 		supabase.auth.getSession().then(({ data: { session } }) => {
@@ -28,17 +21,14 @@ function App() {
 	}, []);
 
 	function togglePanel(buttonID) {
-		// console.log(button);
 		let button = document.getElementById(buttonID);
 		let panelid = button.getAttribute("aria-controls");
-		// let panelid = button;
 		let panel = document.getElementById(panelid);
 		if (panel.open) {
 			panel.close();
 			button.classList.remove("current");
 		} else {
 			let otherPanel = document.querySelector(".peek-panel-wrapper[open]");
-			console.log(otherPanel);
 			if (otherPanel) {
 				otherPanel.close();
 				let otherButton = document.getElementById(
@@ -51,14 +41,14 @@ function App() {
 		}
 	}
 
-	function formChanged(elem) {
-		let button = document.getElementById(elem.getAttribute("data-button-id"));
-		if (elem.checked) {
-			button.classList.add("active");
-		} else {
-			button.classList.remove("active");
-		}
-	}
+	// function formChanged(elem) {
+	// 	let button = document.getElementById(elem.getAttribute("data-button-id"));
+	// 	if (elem.checked) {
+	// 		button.classList.add("active");
+	// 	} else {
+	// 		button.classList.remove("active");
+	// 	}
+	// }
 
 	function toggleFullscreen() {
 		if (!document.fullscreenElement) {
@@ -68,41 +58,6 @@ function App() {
 		}
 	}
 
-	function addSpot() {
-		if (!document.fullscreenElement) {
-			document.documentElement.requestFullscreen();
-		} else if (document.exitFullscreen) {
-			document.exitFullscreen();
-		}
-	}
-
-	async function addLocation(name, longitude, latitude) {
-		console.log(spotLocation);
-        try {
-            const { data, error } = await supabase
-                .from('spots')
-                .insert([
-                	// {
-                 //    name: 'Supa Burger',
-                 //    location: 'POINT(-73.965423 40.782916)',
-                 //  },
-                    {
-                        name: {spotName},
-                        // location: `ST_SetSRID(ST_Point(${longitude}, ${latitude}), 4326)::geography`,
-                        location: `POINT(${spotLocation.lng} ${spotLocation.lat})`
-                        // Alternatively: `ST_GeographyFromText('SRID=4326;POINT(${longitude} ${latitude})')`
-                    }
-                ]);
-
-            if (error) {
-                console.error('Error inserting location:', error.message);
-            } else {
-                console.log('Location added successfully:', data);
-            }
-        } catch (err) {
-            console.error('Unexpected error:', err);
-        }
-    }
 
 	return (
 		<SpotLocationProvider>
