@@ -2,6 +2,21 @@ body{
 	margin: 0;
 }
 
+/* Setting header height to the full Large-Viewport-Height
+enables mobile users to scroll away the browser UI for a
+simple full screen experience */
+header{
+  height: 100lvh;
+  width: 100%;
+  position: absolute;
+  z-index: 3;
+  pointer-events:none;
+}
+header h1{
+  pointer-events: auto;
+  margin: 0.3em;
+}
+
 .container {
 	display:grid;
   height: 100dvh;

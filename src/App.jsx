@@ -61,6 +61,9 @@ function App() {
 
 	return (
 		<SpotLocationProvider>
+			<header>
+			  <h1>Move Map</h1>
+			</header>
 		<div className="container">
 			<MyMap id="map"/>
 
