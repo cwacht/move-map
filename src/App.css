@@ -16,7 +16,7 @@ header h1{
 	display: inline-block;
     margin: 0.3em 0.2em;
     padding: 0 0.2em;
-    background: hsl(0deg 0% 100% / 75%);
+    background: hsl(0deg 0% 100% / 80%);
     border-radius: 0.2em;
     pointer-events: auto;
 }
@@ -45,8 +45,8 @@ nav{
   width: 100vw;
   z-index: 2;
   grid-area: nav;
+  box-shadow: rgba(0, 0, 0, 1) 0px 1px 4px -1px;
   background: white;
-  border-top:1px solid black;
 
   ul{
     display:flex;
@@ -129,9 +129,10 @@ nav{
   border:1px solid black;
   border-radius:10px;
   pointer-events: auto;
-
+  max-width: 600px;
+      margin-inline: auto;
 }
-@media screen and (orientation: landscape) {
+@media screen and (orientation: landscape) and ( height < 600px ) {
   .container{
     display:grid;
     height: 100dvh;
@@ -156,29 +157,36 @@ nav{
   }
 }
 
-@media (width >= 1024px) {
-  .container{
-    display:grid;
-    height: 100vh;
-    grid-template-rows: 1fr;
-    grid-template-columns: 80px 1fr;
-    grid-template-areas:
-      "nav main"
+@media ( width >= 600px ) and ( height >= 600px ) {
+
+	.container {
+  grid-template-rows: 1fr 80px;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "main"
+    "nav"
+}
+.map{
+ grid-row-start: main;
+ grid-row-end: nav;
+ }
+ nav{
+ max-width: 500px;
+	margin: auto;
+	padding: 0.5em;
+	border-radius: 1em;
+  }
+  .peek-panel-wrapper{
+  grid-row-start: main;
+  grid-row-end: nav;
 
   }
-  nav{
-    left:0;
-    width:40px;
-    padding: 20px;
-    border-top:none;
-    border-right:1px solid black;
-
-    ul{
-      gap: 2em;
-      flex-direction:column;
-      justify-content: flex-start;
-    }
+  .peek-panel{
+  margin-bottom: 5em;
   }
+}
+
+@media (width >= 600px ) and ( orientation: landscape ) {
 }
 
 
