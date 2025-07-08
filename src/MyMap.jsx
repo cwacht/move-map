@@ -101,13 +101,14 @@ export default function MyMap() {
 					mapTypeControlOptions={{
 			      position: ControlPosition.TOP_RIGHT,
 			    }}
-					cameraControl={true}
-					cameraControlOptions={{
-			      position: ControlPosition.RIGHT_TOP,
-			    }}
-					streetViewControlOptions={{
-			      position: ControlPosition.RIGHT_TOP,
-			    }}
+					cameraControl={false}
+					// cameraControlOptions={{
+			  //     position: ControlPosition.RIGHT_TOP,
+			  //   }}
+					streetViewControl={false}
+					// streetViewControlOptions={{
+			  //     position: ControlPosition.RIGHT_TOP,
+			  //   }}
 				>
 					{spots ? <PoiMarkers pois={spots} /> : ""}
 				</Map>

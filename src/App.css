@@ -13,8 +13,12 @@ header{
   pointer-events:none;
 }
 header h1{
-  pointer-events: auto;
-  margin: 0.3em;
+	display: inline-block;
+    margin: 0.3em 0.2em;
+    padding: 0 0.2em;
+    background: hsl(0deg 0% 100% / 75%);
+    border-radius: 0.2em;
+    pointer-events: auto;
 }
 
 .container {
