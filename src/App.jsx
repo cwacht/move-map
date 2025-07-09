@@ -1,3 +1,4 @@
+import React from 'react';
 import "./App.css";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
@@ -7,8 +8,23 @@ import MyMap from "./MyMap";
 import AddSpot from "./AddSpot";
 import { SpotLocationProvider } from './SpotLocationContext';
 
+// import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+
 function App() {
 	const [session, setSession] = useState(null);
+	// const [tabIndex, setTabIndex] = useState(0);
+	const [selectedSpot, setSelectedSpot] = useState("No Spot Selected");
+	const [openPeek, setOpenPeek] = useState("");
+
+  function updateSelectedSpot(text) {
+		if(text=="omg"){
+			setOpenPeek("➕")
+		}else{
+			setOpenPeek("🧬")
+		}
+		setSelectedSpot(text);
+	}
 
 	useEffect(() => {
 		supabase.auth.getSession().then(({ data: { session } }) => {
@@ -57,6 +73,61 @@ function App() {
 			document.exitFullscreen();
 		}
 	}
+	// {props.peeks.map((peek) => (
+	function Peeks({children}) {
+		return (
+			<>
+				<nav>
+					<ul>
+						{React.Children.map(children, (child, index) => {
+							return (
+								<li>
+									<button
+										id={child.props.text + "Button"}
+										className={"nav-button" + (child.props.text == child.props.openPeek ? " current" : "")}
+										aria-controls={child.props.text + "Panel"}
+										onClick={() => togglePanel(child.props.text + "Button")}
+									>
+										{child.props.text}
+									</button>
+
+								</li>
+							);
+			      })}
+					</ul>
+				</nav>
+				{React.Children.map(children, (child, index) => {
+					return (
+						<dialog
+							id={child.props.text + "Panel"}
+							className="peek-panel-wrapper"
+							data-nav-button={child.props.text + "Button"}
+							open={child.props.text == child.props.openPeek ? true : false}
+							// ref={(el) => (panelRefs.current.InfoPanel = el)}
+						>
+							<div className="peek-panel">
+								{child.props.children}
+							</div>
+						</dialog>
+					);
+	      })}
+			</>
+		);
+	};
+	function Peek(props) {
+		return (
+			<li>
+				<button
+					// key={peek.key}
+					// position={peek.location}
+					// clickable={true}
+      		// onClick={() => handleMarkerClick(peek)}
+				>
+					{props.text}
+				</button>
+			</li>
+		);
+	};
 
 
 	return (
@@ -65,104 +136,18 @@ function App() {
 			  <h1>Move Map</h1>
 			</header>
 		<div className="container">
-			<MyMap id="map"/>
+			<MyMap
+				id="map"
+				updateSelectedSpot={updateSelectedSpot}
+				/>
 
-			<nav>
-				<ul>
-					<li>
-						<button
-							id="InfoButton"
-							className="nav-button"
-							aria-controls="InfoPanel"
-							onClick={() => togglePanel("InfoButton")}
-						>
-							🧬
-						</button>
-					</li>
-					<li>
-						<button
-							id="AddSpotButton"
-							className="nav-button"
-							aria-controls="AddSpotPanel"
-							onClick={() => togglePanel("AddSpotButton")}
-						>
-							➕
-						</button>
-					</li>
-					<li>
-						<button
-							id="SearchButton"
-							className="nav-button"
-							aria-controls="SearchPanel"
-							onClick={() => togglePanel("SearchButton")}
-						>
-							🔍
-						</button>
-					</li>
-					<li>
-						<button
-							id="SettingsButton"
-							className="nav-button"
-							aria-controls="SettingsPanel"
-							onClick={() => togglePanel("SettingsButton")}
-						>
-							⚙️
-						</button>
-					</li>
-					<li>
-						<button
-							id="AccountButton"
-							className="nav-button"
-							aria-controls="AccountPanel"
-							onClick={() => togglePanel("AccountButton")}
-						>
-							👤
-						</button>
-					</li>
-				</ul>
-			</nav>
-
-			<dialog
-				id="InfoPanel"
-				className="peek-panel-wrapper"
-				data-nav-button="InfoButton"
-				// ref={(el) => (panelRefs.current.InfoPanel = el)}
-			>
-				<div className="peek-panel">
-					<form onSubmit={(e) => e.preventDefault()}>
-						{" "}
-						{/* Prevent default form submission */}
-						<input
-							type="checkbox"
-							id="InfoPanelActive"
-							name="InfoPanelActive"
-							value="InfoPanelActive"
-							data-button-id="InfoButton"
-							// onChange={formChanged}
-						/>
-						<label htmlFor="InfoPanelActive">Info Panel Active</label>
-					</form>
-				</div>
-			</dialog>
-
-			<dialog
-				id="AddSpotPanel"
-				className="peek-panel-wrapper"
-				data-nav-button="AddSpotButton"
-				// ref={(el) => (panelRefs.current.AddSpotPanel = el)}
-			>
-				<div className="peek-panel">
-					<AddSpot/>
-				</div>
-			</dialog>
-
-			<dialog
-				id="SearchPanel"
-				className="peek-panel-wrapper"
-				data-nav-button="SearchButton"
-				// ref={(el) => (panelRefs.current.SearchPanel = el)}
-			>
-				<div className="peek-panel">
+			<Peeks>
+				<Peek id="Info" text="🧬" openPeek={openPeek}>
+					Spot:<br/>
+					{selectedSpot}
+				</Peek>
+				<Peek id="AddSpot" text="➕" openPeek={openPeek}><AddSpot/></Peek>
+				<Peek id="Search" text="🔍">
 					<form onSubmit={(e) => e.preventDefault()}>
 						<input
 							type="checkbox"
@@ -174,36 +159,20 @@ function App() {
 						/>
 						<label htmlFor="SearchPanelActive">Search Panel Active</label>
 					</form>
-				</div>
-			</dialog>
-
-			<dialog
-				id="SettingsPanel"
-				className="peek-panel-wrapper"
-				data-nav-button="SettingsButton"
-				// ref={(el) => (panelRefs.current.SettingsPanel = el)}
-			>
-				<div className="peek-panel">
+				</Peek>
+				<Peek id="Settings" text="⚙️">
 					Settings
 					<button onClick={toggleFullscreen}>Toggle Fullscreen</button>
-				</div>
-			</dialog>
-
-			<dialog
-				id="AccountPanel"
-				className="peek-panel-wrapper"
-				data-nav-button="AccountButton"
-				// ref={(el) => (panelRefs.current.AccountPanel = el)}
-			>
-				<div className="peek-panel">
+				</Peek>
+				<Peek id="Account" text="👤">
 					Account
 					{!session ? (
 						<Auth />
 					) : (
 						<Account key={session.user.id} session={session} />
 					)}
-				</div>
-			</dialog>
+				</Peek>
+			</Peeks>
 		</div>
     </SpotLocationProvider>
 	);

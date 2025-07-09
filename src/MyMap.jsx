@@ -10,7 +10,7 @@ import {
 	ControlPosition,
 } from "@vis.gl/react-google-maps";
 
-export default function MyMap() {
+export default function MyMap({ updateSelectedSpot }) {
 	const [spots, setSpots] = useState([]);
 	const { setSpotLocation } = useContext(SpotLocationContext);
 
@@ -21,7 +21,12 @@ export default function MyMap() {
 		return (
 			<>
 				{props.pois.map((poi) => (
-					<AdvancedMarker key={poi.key} position={poi.location}>
+					<AdvancedMarker
+						key={poi.key}
+						position={poi.location}
+						clickable={true}
+        		onClick={() => updateSelectedSpot(poi.key)}
+					>
 						<Pin
 							background={poi.key=="omg" ? "cornflowerblue" : "#FBBC04"}
 							glyphColor={"#000"}
@@ -109,6 +114,7 @@ export default function MyMap() {
 					// streetViewControlOptions={{
 			  //     position: ControlPosition.RIGHT_TOP,
 			  //   }}
+					// setTabIndex={() => setTabIndex(0)}
 				>
 					{spots ? <PoiMarkers pois={spots} /> : ""}
 				</Map>
