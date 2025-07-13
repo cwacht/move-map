@@ -14,16 +14,47 @@ import 'react-tabs/style/react-tabs.css';
 function App() {
 	const [session, setSession] = useState(null);
 	// const [tabIndex, setTabIndex] = useState(0);
-	const [selectedSpot, setSelectedSpot] = useState("No Spot Selected");
+	const [selectedSpot, setSelectedSpot] = useState(null);
 	const [openPeek, setOpenPeek] = useState("");
 
-  function updateSelectedSpot(text) {
-		if(text=="omg"){
+	const [selectedFile, setSelectedFile] = useState(null);
+
+	async function handleFileChange(event) {
+  // const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    const { data, error } = await supabase.storage
+    .from('spot-images')
+    .upload(`${selectedSpot.key.trim()}.png`, event.target.files[0])
+      // .from('avatars')
+      // .upload('public/avatar1.png', event.target.files[0])
+    const { data: publicUrlData, error: publicUrlError } = await supabase.storage
+        .from('spot-images')
+        .getPublicUrl(`${selectedSpot.key.trim()}.png`);
+
+    if (publicUrlError) {
+      console.error('Error getting public URL:', publicUrlError);
+      return;
+    }
+    // const imageUrl = publicUrlData.publicUrl;
+
+    const { error: dbError } = await supabase
+      .from('spots')
+      .update({ image_url: publicUrlData.publicUrl })
+      .eq('id', selectedSpot.id);
+
+    if (dbError) {
+      console.error('Error updating database:', dbError);
+    }
+  };
+
+  function updateSelectedSpot(spot) {
+  	console.log(spot)
+		if(spot.key=="omg"){
 			setOpenPeek("➕")
 		}else{
 			setOpenPeek("🧬")
 		}
-		setSelectedSpot(text);
+		setSelectedSpot(spot);
 	}
 
 	useEffect(() => {
@@ -143,8 +174,26 @@ function App() {
 
 			<Peeks>
 				<Peek id="Info" text="🧬" openPeek={openPeek}>
+					{!selectedSpot ? (
+						"No Spot Selected"
+					) : (
+						<div>
+							<h2>{selectedSpot.key}</h2>
+							{!selectedSpot.image ? (
+								"No Image"
+							) : (
+								<img src={selectedSpot.image}/>
+							)}
+						</div>
+					)}
 					Spot:<br/>
-					{selectedSpot}
+					{selectedSpot ? selectedSpot.key : "No Spot Selected"}<br/>
+					Spot ID:<br/>
+					{selectedSpot ? selectedSpot.id : "No Spot Selected"}<br/>
+					<div>
+			      <input type="file" onChange={handleFileChange} />
+			      {selectedFile && <p>Selected file: {selectedFile.key}</p>}
+			    </div>
 				</Peek>
 				<Peek id="AddSpot" text="➕" openPeek={openPeek}><AddSpot/></Peek>
 				<Peek id="Search" text="🔍">

@@ -22,10 +22,11 @@ export default function MyMap({ updateSelectedSpot }) {
 			<>
 				{props.pois.map((poi) => (
 					<AdvancedMarker
+						id={poi.id}
 						key={poi.key}
 						position={poi.location}
 						clickable={true}
-        		onClick={() => updateSelectedSpot(poi.key)}
+        		onClick={() => updateSelectedSpot(poi)}
 					>
 						<Pin
 							background={poi.key=="omg" ? "cornflowerblue" : "#FBBC04"}
@@ -66,8 +67,10 @@ export default function MyMap({ updateSelectedSpot }) {
 				throw error;
 			}
 			const newArray = data.map((obj) => {
-				const { name, lat, long, ...rest } = obj;
+				console.log(obj)
+				const { id, name, lat, long, ...rest } = obj;
 				return {
+					id: id,
 					key: name,
 					location: { lat: lat, lng: long },
 					...rest,
