@@ -4,7 +4,7 @@
   "display": "standalone",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "MoveMapLogo.png",
       "type": "image/png",
       "sizes": "512x512 192x192"
     }
