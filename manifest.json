@@ -1,0 +1,12 @@
+{
+  "name": "Move Map",
+  "start_url": "/move-map",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "MoveMapLogo.png",
+      "type": "image/png",
+      "sizes": "512x512 192x192"
+    }
+  ]
+}
